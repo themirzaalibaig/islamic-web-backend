@@ -4,7 +4,7 @@ import { env } from '@/config/env.config';
 
 export const connectMongo = async (): Promise<void> => {
   try {
-    await mongoose.connect(`${env.MONGO_URI}/${env.MONGO_DB}`);
+    await mongoose.connect(env.MONGO_URI);
     logger.info('MongoDB connected');
   } catch (err) {
     logger.error({ error: err }, 'MongoDB connection error');

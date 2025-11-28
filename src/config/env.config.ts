@@ -13,7 +13,6 @@ export const env = {
   PORT: parsePort(process.env.PORT),
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
   MONGO_URI: process.env.MONGO_URI || 'mongodb://localhost:27017',
-  MONGO_DB: process.env.MONGO_DB || 'islamic-web',
   REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
   RATE_LIMIT_WINDOW_MS: Number(process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000),
   RATE_LIMIT_MAX: Number(process.env.RATE_LIMIT_MAX || 100),
