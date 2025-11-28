@@ -1,12 +1,7 @@
 import { v4 as uuid } from 'uuid';
-import {
-  UploadModel,
-  GetAllUploadsDto,
-  Upload,
-  UploadStatus,
-  CreateUploadDto,
-} from '@/features/upload';
 import { createCachedRepository } from '@/utils';
+import { GetAllUploadsDto, Upload, UploadStatus, CreateUploadDto } from '@/features/upload';
+import { UploadModel } from '@/features/upload/model/upload.model';
 import { storageUploadBuffer, storageUploadFile, storageDeleteAsset } from '@/providers';
 
 const repo = createCachedRepository(UploadModel as any, 'upload');

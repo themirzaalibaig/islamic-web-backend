@@ -24,8 +24,8 @@ export const createUploadController = async (
     const file = (req as any).file;
     const doc = await createUploadFromBuffer(file, req.body);
     return Res.created(res, { upload: doc });
-  } catch {
-    return Res.internalError(res);
+  } catch (error: any) {
+    return Res.internalError(res, 'Internal server error', error);
   }
 };
 
@@ -44,8 +44,8 @@ export const createUploadsController = async (
       results.push(doc);
     }
     return Res.created(res, { uploads: results });
-  } catch {
-    return Res.internalError(res);
+  } catch (error: any) {
+    return Res.internalError(res, 'Internal server error', error);
   }
 };
 
@@ -76,8 +76,8 @@ export const updateUploadController = async (
     const doc = await updateUploadById(req.params.id, req.body as any);
     if (!doc) return Res.notFound(res, 'Upload not found');
     return Res.success(res, { upload: doc }, 'Updated');
-  } catch {
-    return Res.internalError(res);
+  } catch (error: any) {
+    return Res.internalError(res, 'Internal server error', error);
   }
 };
 
