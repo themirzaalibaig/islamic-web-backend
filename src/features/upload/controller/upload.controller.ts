@@ -24,8 +24,8 @@ export const createUploadController = async (
     const file = (req as any).file;
     const doc = await createUploadFromBuffer(file, req.body);
     return Res.created(res, { upload: doc });
-  } catch {
-    return Res.internalError(res);
+  } catch (error: any) {
+    return Res.internalError(res, "Internal server error", error);
   }
 };
 
@@ -44,8 +44,8 @@ export const createUploadsController = async (
       results.push(doc);
     }
     return Res.created(res, { uploads: results });
-  } catch {
-    return Res.internalError(res);
+  } catch (error: any) {
+    return Res.internalError(res, "Internal server error", error);
   }
 };
 
@@ -53,19 +53,27 @@ export const getUploadController = async (
   req: TypedRequest<unknown, unknown, IdParams>,
   res: Response,
 ) => {
-  const doc = await getUploadById(req.params.id);
-  if (!doc) return Res.notFound(res, 'Upload not found');
-  return Res.success(res, { upload: doc });
+  try {
+    const doc = await getUploadById(req.params.id);
+    if (!doc) return Res.notFound(res, 'Upload not found');
+    return Res.success(res, { upload: doc });
+  } catch (error: any) {
+    return Res.internalError(res, "Internal server error", error);
+  }
 };
 
 export const listUploadsController = async (req: TypedRequest<GetAllUploadsDto>, res: Response) => {
   const dto = req.query;
-  const result = await listUploads(dto);
-  if (dto.page && dto.limit)
-    return Res.paginated(res, { uploads: result.data }, result.total, dto.page, dto.limit);
-  return Res.success(res, { uploads: result.data }, 'Data retrieved successfully', undefined, {
-    total: result.total,
-  });
+  try {
+    const result = await listUploads(dto);
+    if (dto.page && dto.limit)
+      return Res.paginated(res, { uploads: result.data }, result.total, dto.page, dto.limit);
+    return Res.success(res, { uploads: result.data }, 'Data retrieved successfully', undefined, {
+      total: result.total,
+    });
+  } catch (error: any) {
+    return Res.internalError(res, "Internal server error", error);
+  }
 };
 
 export const updateUploadController = async (
@@ -76,8 +84,8 @@ export const updateUploadController = async (
     const doc = await updateUploadById(req.params.id, req.body as any);
     if (!doc) return Res.notFound(res, 'Upload not found');
     return Res.success(res, { upload: doc }, 'Updated');
-  } catch {
-    return Res.internalError(res);
+  } catch (error: any) {
+    return Res.internalError(res, "Internal server error", error);
   }
 };
 
@@ -85,7 +93,11 @@ export const deleteUploadController = async (
   req: TypedRequest<unknown, unknown, IdParams>,
   res: Response,
 ) => {
-  const ok = await deleteUploadById(req.params.id);
-  if (!ok) return Res.notFound(res, 'Upload not found');
-  return Res.noContent(res);
+  try {
+    const ok = await deleteUploadById(req.params.id);
+    if (!ok) return Res.notFound(res, 'Upload not found');
+    return Res.noContent(res);
+  } catch (error: any) {
+    return Res.internalError(res, "Internal server error", error);
+  }
 };
