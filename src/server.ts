@@ -4,10 +4,10 @@ import cors from 'cors';
 import http from 'http';
 import path from 'path';
 import { v4 as uuid } from 'uuid';
-import routes from '@/routes';
+import { router } from '@/routes';
 import { env, connectMongo, connectRedis } from '@/config';
 import { logger, Res, initTestWorker, addTestJob, initWebsocket } from '@/utils';
-import { apiRateLimiter } from '@/middlewares';
+import { apiRateLimiter, globalErrorHandler } from '@/middlewares';
 
 const app = express();
 
@@ -27,17 +27,14 @@ app.use((req, _res, next) => {
   next();
 });
 
-app.use(env.BASE_API_PATH, routes);
-app.use(env.VERSIONED_API_PATH, routes);
+app.use(env.BASE_API_PATH, router);
+app.use(env.VERSIONED_API_PATH, router);
 
 app.use((req, res) => {
   return Res.notFound(res, 'Route not found');
 });
 
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  logger.error({ error: err }, 'Unhandled error');
-  return Res.internalError(res);
-});
+app.use(globalErrorHandler);
 
 app.use('/uploads', express.static(path.join(process.cwd(), env.LOCAL_UPLOAD_DIR)));
 
@@ -62,7 +59,7 @@ const start = async (): Promise<void> => {
   server.listen(env.PORT, () => {
     logger.info(`Server listening on port http://localhost:${env.PORT}`);
   });
-  addTestJob('boot', { startedAt: Date.now() }).catch(() => {});
+  addTestJob('boot', { startedAt: Date.now() }).catch(() => { });
 };
 
 start();
