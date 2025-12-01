@@ -15,13 +15,13 @@ const write = (p: string, c: string) => fs.writeFileSync(p, c);
 write(
   path.join(root, 'index.ts'),
   [
+    `export * from './type/${name}.type';`,
+    `export * from './validation/${name}.validations';`,
+    `export * from './dto/${name}.dto';`,
+    `export * from './model/${name}.model';`,
     `export * from './controller/${name}.controller';`,
     `export * from './service/${name}.service';`,
-    `export * from './model/${name}.model';`,
     `export * from './route/${name}s.routes';`,
-    `export * from './type/${name}.type';`,
-    `export * from './dto/${name}.dto';`,
-    `export * from './validation/${name}.validations';`,
   ].join('\n'),
 );
 
