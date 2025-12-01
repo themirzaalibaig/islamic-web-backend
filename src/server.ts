@@ -59,7 +59,7 @@ const start = async (): Promise<void> => {
   server.listen(env.PORT, () => {
     logger.info(`Server listening on port http://localhost:${env.PORT}`);
   });
-  addTestJob('boot', { startedAt: Date.now() }).catch(() => { });
+  addTestJob('boot', { startedAt: Date.now() }).catch(() => {});
 };
 
 start();
