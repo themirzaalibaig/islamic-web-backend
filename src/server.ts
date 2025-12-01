@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import http from 'http';
 import path from 'path';
+import cookieParser from 'cookie-parser';
 import { v4 as uuid } from 'uuid';
 import { router } from '@/routes';
 import { env, connectMongo, connectRedis } from '@/config';
@@ -17,7 +18,8 @@ app.use((req, _res, next) => {
 });
 
 app.use(helmet());
-app.use(cors({ origin: env.CORS_ORIGIN }));
+app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+app.use(cookieParser());
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(apiRateLimiter);

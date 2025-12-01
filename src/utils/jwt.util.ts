@@ -55,3 +55,10 @@ export const generateTokens = (payload: object) => {
   const refreshToken = signRefreshToken(payload);
   return { accessToken, refreshToken };
 };
+
+export const getRemainingDays = (token: string): number => {
+  const expMs = getTokenExpiration(token);
+  if (!expMs) return 0;
+  const remainingMs = expMs - Date.now();
+  return Math.floor(remainingMs / (1000 * 60 * 60 * 24));
+};

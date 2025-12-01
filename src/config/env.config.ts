@@ -19,6 +19,7 @@ export const env = {
   CORS_ORIGIN: (process.env.CORS_ORIGIN || '*').split(','),
   API_PREFIX: process.env.API_PREFIX || '/api',
   API_VERSION: process.env.API_VERSION || 'v1',
+  REFRESH_ROTATION_THRESHOLD: Number(process.env.REFRESH_ROTATION_THRESHOLD || 2),
   JWT_SECRET: process.env.JWT_SECRET || 'changeme_secret',
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '1h',
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
