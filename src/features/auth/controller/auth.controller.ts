@@ -8,79 +8,83 @@ import {
   RefreshTokenDto,
   UpdateUserDto,
   updateUser,
+  verifyEmail,
+  resendVerificationEmail,
+  forgotPassword,
+  resetPassword,
+  VerifyEmailDto,
+  ResendVerificationEmailDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
 } from '@/features/auth';
 import { TypedRequest } from '@/types';
-import { createValidationError, Res, setCookie, clearCookie, getTokenExpiration } from '@/utils';
+import { Res, setCookie, clearCookie, getTokenExpiration, catchAsync } from '@/utils';
 import { IdParams } from '@/dto';
 
-export const SignupController = async (req: TypedRequest<unknown, SignupDto>, res: Response) => {
-  try {
-    const user = await signup(req.body);
-    return Res.created(res, { user }, 'User created successfully');
-  } catch (error: any) {
-    if (error.code === 11000) {
-      const validationError = createValidationError(
-        'email',
-        'Email already exists',
-        req.body.email,
-      );
-      return Res.conflict(res, 'Email already exists', [validationError]);
-    }
-    return Res.internalError(res, 'Internal server error', error);
-  }
-};
+export const signupController = catchAsync(async (req: TypedRequest<unknown, SignupDto>, res: Response) => {
+  const result = await signup(req.body);
+  return Res.created(res, result, 'Please verify your email.');
+});
 
-export const LoginController = async (req: TypedRequest<unknown, LoginDto>, res: Response) => {
-  try {
-    const { user, token } = await login(req.body);
-    setCookie(res, 'accessToken', token.accessToken, {
-      maxAge: getTokenExpiration(token.accessToken)!,
-    });
-    setCookie(res, 'refreshToken', token.refreshToken, {
-      maxAge: getTokenExpiration(token.refreshToken)!,
-    });
-    return Res.success(res, { user, token: token.accessToken }, 'Login successful');
-  } catch (error: any) {
-    return Res.internalError(res, 'Internal server error', error);
-  }
-};
+export const verifyEmailController = catchAsync(async (req: TypedRequest<unknown, VerifyEmailDto>, res: Response) => {
+  const { email, otp } = req.body;
+  const user = await verifyEmail(email, otp);
+  return Res.success(res, { user }, 'Email verified successfully');
+});
 
-export const RefreshTokenController = async (
+export const resendVerificationEmailController = catchAsync(async (req: TypedRequest<unknown, ResendVerificationEmailDto>, res: Response) => {
+  const { email } = req.body;
+  const result = await resendVerificationEmail(email);
+  return Res.success(res, result, 'Verification email sent successfully');
+});
+
+export const forgotPasswordController = catchAsync(async (req: TypedRequest<unknown, ForgotPasswordDto>, res: Response) => {
+  const { email } = req.body;
+  const result = await forgotPassword(email);
+  return Res.success(res, result, 'Password reset email sent successfully');
+});
+
+export const resetPasswordController = catchAsync(async (req: TypedRequest<unknown, ResetPasswordDto>, res: Response) => {
+  const { email, otp, newPassword } = req.body;
+  const result = await resetPassword(email, otp, newPassword);
+  return Res.success(res, result, 'Password reset successfully');
+});
+
+export const loginController = catchAsync(async (req: TypedRequest<unknown, LoginDto>, res: Response) => {
+  const { user, token } = await login(req.body);
+  setCookie(res, 'accessToken', token.accessToken, {
+    maxAge: getTokenExpiration(token.accessToken)!,
+  });
+  setCookie(res, 'refreshToken', token.refreshToken, {
+    maxAge: getTokenExpiration(token.refreshToken)!,
+  });
+  return Res.success(res, { user, token: token }, 'Login successful');
+});
+
+export const refreshTokenController = catchAsync(async (
   req: TypedRequest<unknown, RefreshTokenDto>,
   res: Response,
 ) => {
-  try {
-    const { user, token } = await refreshToken(req.body.refreshToken);
-    setCookie(res, 'accessToken', token.accessToken, {
-      maxAge: getTokenExpiration(token.accessToken)!,
-    });
-    setCookie(res, 'refreshToken', token.refreshToken, {
-      maxAge: getTokenExpiration(token.refreshToken)!,
-    });
-    return Res.success(res, { user, token: token.accessToken }, 'Refresh token successful');
-  } catch (error: any) {
-    return Res.internalError(res, 'Internal server error', error);
-  }
-};
+  const { user, token } = await refreshToken(req.body.refreshToken);
+  setCookie(res, 'accessToken', token.accessToken, {
+    maxAge: getTokenExpiration(token.accessToken)!,
+  });
+  setCookie(res, 'refreshToken', token.refreshToken, {
+    maxAge: getTokenExpiration(token.refreshToken)!,
+  });
+  return Res.success(res, { user, token: token }, 'Refresh token successful');
+});
 
-export const LogoutController = async (req: TypedRequest, res: Response) => {
-  try {
-    clearCookie(res, 'accessToken');
-    clearCookie(res, 'refreshToken');
-    return Res.success(res, {}, 'Logout successful');
-  } catch (error: any) {
-    return Res.internalError(res, 'Internal server error', error);
-  }
-};
+export const logoutController = catchAsync(async (req: TypedRequest, res: Response) => {
+  clearCookie(res, 'accessToken');
+  clearCookie(res, 'refreshToken');
+  return Res.success(res, {}, 'Logout successful');
+});
 
-export const updateUserController = async (
+export const updateUserController = catchAsync(async (
   req: TypedRequest<unknown, UpdateUserDto, IdParams>,
   res: Response,
 ) => {
-  try {
-    const user = await updateUser(req.params.id, req.body);
-    return Res.success(res, { user }, 'User updated successfully');
-  } catch (error: any) {
-    return Res.internalError(res, 'Internal server error', error);
-  }
-};
+  const user = await updateUser(req.params.id, req.body);
+  return Res.success(res, { user }, 'User updated successfully');
+});
