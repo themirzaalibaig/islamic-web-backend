@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import { v4 as uuid } from 'uuid';
 import { router } from '@/routes';
 import { env, connectMongo, connectRedis } from '@/config';
-import { logger, Res, initTestWorker, addTestJob, initWebsocket } from '@/utils';
+import { logger, Res, initTestWorker, addTestJob, initWebsocket, initEmailWorker } from '@/utils';
 import { apiRateLimiter, globalErrorHandler } from '@/middlewares';
 
 const app = express();
@@ -55,13 +55,14 @@ const start = async (): Promise<void> => {
   }
   try {
     initTestWorker();
+    initEmailWorker();
   } catch (err) {
     logger.error({ error: err }, 'Queue worker init failed');
   }
   server.listen(env.PORT, () => {
     logger.info(`Server listening on port http://localhost:${env.PORT}`);
   });
-  addTestJob('boot', { startedAt: Date.now() }).catch(() => {});
+  addTestJob('boot', { startedAt: Date.now() }).catch(() => { });
 };
 
 start();

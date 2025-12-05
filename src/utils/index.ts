@@ -14,3 +14,5 @@ export * from './storage-local.util';
 export * from './storage-s3.util';
 export * from './error.util';
 export * from './cookie.util';
+export * from './async-handler.util';
+export * from './email-templates.util';
