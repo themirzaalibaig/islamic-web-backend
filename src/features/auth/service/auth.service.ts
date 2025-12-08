@@ -1,5 +1,14 @@
 import { LoginDto, SignupDto, UpdateUserDto, UserModel } from '@/features/auth';
-import { AppError, createCachedRepository, createValidationError, generateTokens, addEmailJob, getVerificationEmailTemplate, getWelcomeEmailTemplate, getForgotPasswordEmailTemplate, hashPassword } from '@/utils';
+import {
+  AppError,
+  createCachedRepository,
+  createValidationError,
+  generateTokens,
+  addEmailJob,
+  getVerificationEmailTemplate,
+  getWelcomeEmailTemplate,
+  getForgotPasswordEmailTemplate,
+} from '@/utils';
 import crypto from 'crypto';
 
 const repo = createCachedRepository(UserModel, 'user');
@@ -114,7 +123,7 @@ export const resetPassword = async (email: string, otp: string, newPassword: str
 
 export const login = async (loginDto: LoginDto) => {
   const { email, password } = loginDto;
-  const user = await UserModel.findOne({ email });
+  const user = await UserModel.findOne({ email }).select('+password');
   let validationError;
   if (!user) {
     validationError = createValidationError('email', 'User not found', email);

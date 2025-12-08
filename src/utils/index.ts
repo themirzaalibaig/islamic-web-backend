@@ -16,3 +16,4 @@ export * from './error.util';
 export * from './cookie.util';
 export * from './async-handler.util';
 export * from './email-templates.util';
+export * from './auth.util';
