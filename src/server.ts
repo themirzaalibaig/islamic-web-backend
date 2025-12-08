@@ -6,23 +6,29 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import { v4 as uuid } from 'uuid';
 import { router } from '@/routes';
-import { env, connectMongo, connectRedis } from '@/config';
+import { env, connectMongo, connectRedis, corsOptions } from '@/config';
 import { logger, Res, initTestWorker, addTestJob, initWebsocket, initEmailWorker } from '@/utils';
 import { apiRateLimiter, globalErrorHandler } from '@/middlewares';
 
 const app = express();
 
+app.use(cors(corsOptions));
+app.use(cookieParser());
+
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginEmbedderPolicy: false,
+  }),
+);
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(apiRateLimiter);
+
 app.use((req, _res, next) => {
   req.headers['x-request-id'] = req.headers['x-request-id'] || uuid();
   next();
 });
-
-app.use(helmet());
-app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
-app.use(cookieParser());
-app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true }));
-app.use(apiRateLimiter);
 
 app.use((req, _res, next) => {
   logger.info({ method: req.method, path: req.path }, 'Request');
@@ -62,7 +68,7 @@ const start = async (): Promise<void> => {
   server.listen(env.PORT, () => {
     logger.info(`Server listening on port http://localhost:${env.PORT}`);
   });
-  addTestJob('boot', { startedAt: Date.now() }).catch(() => { });
+  addTestJob('boot', { startedAt: Date.now() }).catch(() => {});
 };
 
 start();

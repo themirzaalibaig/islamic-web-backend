@@ -6,3 +6,4 @@ export * from './queue.config';
 export * from './email.config';
 export * from './cloudinary.config';
 export * from './aws.config';
+export * from './cors.config';

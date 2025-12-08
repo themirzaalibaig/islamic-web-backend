@@ -16,7 +16,7 @@ export const env = {
   REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
   RATE_LIMIT_WINDOW_MS: Number(process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000),
   RATE_LIMIT_MAX: Number(process.env.RATE_LIMIT_MAX || 100),
-  CORS_ORIGIN: (process.env.CORS_ORIGIN || '*').split(','),
+  CORS_ORIGIN: (process.env.CORS_ORIGIN || 'http://localhost:5173').split(','),
   API_PREFIX: process.env.API_PREFIX || '/api',
   API_VERSION: process.env.API_VERSION || 'v1',
   REFRESH_ROTATION_THRESHOLD: Number(process.env.REFRESH_ROTATION_THRESHOLD || 2),
