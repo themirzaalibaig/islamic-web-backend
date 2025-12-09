@@ -63,7 +63,13 @@ export const getHadithsByBookController = catchAsync(
     const { collectionName, bookNumber } = req.params;
     const { page, limit } = req.query;
     const result = await getHadithsByBook(collectionName, bookNumber, page, limit);
-    Res.success(res, result);
+    Res.success(res, {
+      hadiths: result.data,
+      total: result.total,
+      limit: result.limit,
+      previous: result.previous,
+      next: result.next,
+    });
   },
 );
 
