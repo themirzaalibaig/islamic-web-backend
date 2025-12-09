@@ -102,15 +102,11 @@ export const logoutController = catchAsync(async (req: TypedRequest, res: Respon
 export const updateUserController = catchAsync(
   async (req: AuthenticatedRequest<unknown, UpdateUserDto>, res: Response) => {
     const currentUser = getCurrentUser(req);
-    const user = await updateUser(currentUser.id, req.body);
+    const user = await updateUser(currentUser._id, req.body);
     return Res.success(res, { user }, 'User updated successfully');
   },
 );
 
-/**
- * Get current authenticated user
- * Requires authentication via authenticate middleware
- */
 export const getCurrentUserController = catchAsync(
   async (req: AuthenticatedRequest, res: Response) => {
     const user = getCurrentUser(req);

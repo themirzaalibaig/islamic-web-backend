@@ -15,7 +15,7 @@ const repo = createCachedRepository(UserModel, 'user');
 
 export const signup = async (signupDto: SignupDto) => {
   const otp = crypto.randomInt(100000, 999999).toString();
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
   const user = await repo.create({
     ...signupDto,

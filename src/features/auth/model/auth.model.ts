@@ -1,5 +1,5 @@
 import { UserRole } from '@/enums';
-import { User } from '@/features/auth';
+import { User } from '@/features/auth/type/auth.type';
 import { comparePassword, hashPassword } from '@/utils';
 import { Document, model, Schema } from 'mongoose';
 

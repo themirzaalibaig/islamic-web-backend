@@ -35,7 +35,7 @@ export const getCurrentUser = (req: AuthenticatedRequest) => {
  */
 export const getCurrentUserId = (req: AuthenticatedRequest): string => {
   const user = getCurrentUser(req);
-  return user.id;
+  return user._id;
 };
 
 /**
@@ -82,4 +82,3 @@ export const requireRole = (req: AuthenticatedRequest, role: UserRole | string):
 export const requireAdmin = (req: AuthenticatedRequest): void => {
   requireRole(req, UserRole.ADMIN);
 };
-
