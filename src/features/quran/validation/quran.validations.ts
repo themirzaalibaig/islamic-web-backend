@@ -34,7 +34,7 @@ export const getVersesByChapterParamsSchema = z.object({
 });
 
 export const getVersesByChapterQuerySchema = z.object({
-  language: z.string().optional(),
+  language: z.string().optional().default('en'),
   words: z
     .union([z.boolean(), z.enum(['true', 'false'])])
     .transform((val) => (typeof val === 'boolean' ? val : val === 'true'))

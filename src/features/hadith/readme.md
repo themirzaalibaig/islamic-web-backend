@@ -139,20 +139,24 @@ Get a randomly selected hadith from any collection.
 **Endpoint:** `GET /api/hadith/hadiths/random`
 
 **Request:**
+
 - No parameters required
 
 **Response Type:**
+
 ```typescript
-ApiResponse<{ hadith: RandomHadith }>
+ApiResponse<{ hadith: RandomHadith }>;
 ```
 
 **Example Request:**
+
 ```typescript
 const response = await fetch('/api/hadith/hadiths/random');
 const data: ApiResponse<{ hadith: RandomHadith }> = await response.json();
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -193,20 +197,24 @@ Get a list of all available hadith collections.
 **Endpoint:** `GET /api/hadith/collections`
 
 **Request:**
+
 - No parameters required
 
 **Response Type:**
+
 ```typescript
-ApiResponse<{ collections: Collection[] }>
+ApiResponse<{ collections: Collection[] }>;
 ```
 
 **Example Request:**
+
 ```typescript
 const response = await fetch('/api/hadith/collections');
 const data: ApiResponse<{ collections: Collection[] }> = await response.json();
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -247,6 +255,7 @@ Get details of a specific collection.
 **Endpoint:** `GET /api/hadith/collections/:collectionName`
 
 **Path Parameters:**
+
 ```typescript
 {
   collectionName: string; // e.g., "bukhari", "muslim", "nasai"
@@ -254,11 +263,13 @@ Get details of a specific collection.
 ```
 
 **Response Type:**
+
 ```typescript
-ApiResponse<{ collection: Collection }>
+ApiResponse<{ collection: Collection }>;
 ```
 
 **Example Request:**
+
 ```typescript
 const collectionName = 'bukhari';
 const response = await fetch(`/api/hadith/collections/${collectionName}`);
@@ -266,6 +277,7 @@ const data: ApiResponse<{ collection: Collection }> = await response.json();
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -299,6 +311,7 @@ Get all books in a specific collection.
 **Endpoint:** `GET /api/hadith/collections/:collectionName/books`
 
 **Path Parameters:**
+
 ```typescript
 {
   collectionName: string; // e.g., "bukhari"
@@ -306,11 +319,13 @@ Get all books in a specific collection.
 ```
 
 **Response Type:**
+
 ```typescript
-ApiResponse<{ books: Book[] }>
+ApiResponse<{ books: Book[] }>;
 ```
 
 **Example Request:**
+
 ```typescript
 const collectionName = 'bukhari';
 const response = await fetch(`/api/hadith/collections/${collectionName}/books`);
@@ -318,6 +333,7 @@ const data: ApiResponse<{ books: Book[] }> = await response.json();
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -355,19 +371,22 @@ Get details of a specific book in a collection.
 **Endpoint:** `GET /api/hadith/collections/:collectionName/books/:bookNumber`
 
 **Path Parameters:**
+
 ```typescript
 {
   collectionName: string; // e.g., "bukhari"
-  bookNumber: string;      // e.g., "1", "2", "3"
+  bookNumber: string; // e.g., "1", "2", "3"
 }
 ```
 
 **Response Type:**
+
 ```typescript
-ApiResponse<{ book: Book }>
+ApiResponse<{ book: Book }>;
 ```
 
 **Example Request:**
+
 ```typescript
 const collectionName = 'bukhari';
 const bookNumber = '1';
@@ -376,6 +395,7 @@ const data: ApiResponse<{ book: Book }> = await response.json();
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -407,27 +427,33 @@ Get all chapters in a specific book.
 **Endpoint:** `GET /api/hadith/collections/:collectionName/books/:bookNumber/chapters`
 
 **Path Parameters:**
+
 ```typescript
 {
   collectionName: string; // e.g., "bukhari"
-  bookNumber: string;      // e.g., "1"
+  bookNumber: string; // e.g., "1"
 }
 ```
 
 **Response Type:**
+
 ```typescript
-ApiResponse<{ chapters: Chapter[] }>
+ApiResponse<{ chapters: Chapter[] }>;
 ```
 
 **Example Request:**
+
 ```typescript
 const collectionName = 'bukhari';
 const bookNumber = '1';
-const response = await fetch(`/api/hadith/collections/${collectionName}/books/${bookNumber}/chapters`);
+const response = await fetch(
+  `/api/hadith/collections/${collectionName}/books/${bookNumber}/chapters`,
+);
 const data: ApiResponse<{ chapters: Chapter[] }> = await response.json();
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -469,14 +495,16 @@ Get all hadiths in a specific book with pagination support.
 **Endpoint:** `GET /api/hadith/collections/:collectionName/books/:bookNumber/hadiths`
 
 **Path Parameters:**
+
 ```typescript
 {
   collectionName: string; // e.g., "bukhari"
-  bookNumber: string;      // e.g., "1"
+  bookNumber: string; // e.g., "1"
 }
 ```
 
 **Query Parameters:**
+
 ```typescript
 {
   page?: number;   // Page number (optional, default: 1)
@@ -485,11 +513,13 @@ Get all hadiths in a specific book with pagination support.
 ```
 
 **Response Type:**
+
 ```typescript
-ApiResponse<PaginatedResponse<Hadith>>
+ApiResponse<PaginatedResponse<Hadith>>;
 ```
 
 **Example Request:**
+
 ```typescript
 const collectionName = 'bukhari';
 const bookNumber = '1';
@@ -498,16 +528,17 @@ const limit = 10;
 
 const queryParams = new URLSearchParams({
   page: page.toString(),
-  limit: limit.toString()
+  limit: limit.toString(),
 });
 
 const response = await fetch(
-  `/api/hadith/collections/${collectionName}/books/${bookNumber}/hadiths?${queryParams}`
+  `/api/hadith/collections/${collectionName}/books/${bookNumber}/hadiths?${queryParams}`,
 );
 const data: ApiResponse<PaginatedResponse<Hadith>> = await response.json();
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -554,19 +585,22 @@ Get a specific hadith by its number in a collection.
 **Endpoint:** `GET /api/hadith/collections/:collectionName/hadiths/:hadithNumber`
 
 **Path Parameters:**
+
 ```typescript
 {
   collectionName: string; // e.g., "bukhari"
-  hadithNumber: string;    // e.g., "1", "2", "3"
+  hadithNumber: string; // e.g., "1", "2", "3"
 }
 ```
 
 **Response Type:**
+
 ```typescript
-ApiResponse<{ hadith: Hadith }>
+ApiResponse<{ hadith: Hadith }>;
 ```
 
 **Example Request:**
+
 ```typescript
 const collectionName = 'bukhari';
 const hadithNumber = '1';
@@ -575,6 +609,7 @@ const data: ApiResponse<{ hadith: Hadith }> = await response.json();
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -620,6 +655,7 @@ const data: ApiResponse<{ hadith: Hadith }> = await response.json();
 All endpoints follow a consistent error response format:
 
 **Error Response Type:**
+
 ```typescript
 interface ErrorResponse {
   success: false;
@@ -631,6 +667,7 @@ interface ErrorResponse {
 ```
 
 **Common HTTP Status Codes:**
+
 - `200` - Success
 - `400` - Bad Request (invalid parameters)
 - `404` - Not Found (resource doesn't exist)
@@ -638,6 +675,7 @@ interface ErrorResponse {
 - `500` - Internal Server Error
 
 **Example Error Response:**
+
 ```json
 {
   "success": false,
@@ -656,7 +694,6 @@ interface ErrorResponse {
 
 ---
 
-
 ### Axios Example
 
 ```typescript
@@ -668,8 +705,7 @@ const api = axios.create({
 
 // Type-safe API client
 export const hadithClient = {
-  getCollections: () =>
-    api.get<ApiResponse<{ collections: Collection[] }>>('/collections'),
+  getCollections: () => api.get<ApiResponse<{ collections: Collection[] }>>('/collections'),
 
   getCollection: (collectionName: string) =>
     api.get<ApiResponse<{ collection: Collection }>>(`/collections/${collectionName}`),
@@ -678,32 +714,29 @@ export const hadithClient = {
     api.get<ApiResponse<{ books: Book[] }>>(`/collections/${collectionName}/books`),
 
   getBook: (collectionName: string, bookNumber: string) =>
-    api.get<ApiResponse<{ book: Book }>>(
-      `/collections/${collectionName}/books/${bookNumber}`
-    ),
+    api.get<ApiResponse<{ book: Book }>>(`/collections/${collectionName}/books/${bookNumber}`),
 
   getChapters: (collectionName: string, bookNumber: string) =>
     api.get<ApiResponse<{ chapters: Chapter[] }>>(
-      `/collections/${collectionName}/books/${bookNumber}/chapters`
+      `/collections/${collectionName}/books/${bookNumber}/chapters`,
     ),
 
   getHadithsByBook: (
     collectionName: string,
     bookNumber: string,
-    params?: { page?: number; limit?: number }
+    params?: { page?: number; limit?: number },
   ) =>
     api.get<ApiResponse<PaginatedResponse<Hadith>>>(
       `/collections/${collectionName}/books/${bookNumber}/hadiths`,
-      { params }
+      { params },
     ),
 
   getHadith: (collectionName: string, hadithNumber: string) =>
     api.get<ApiResponse<{ hadith: Hadith }>>(
-      `/collections/${collectionName}/hadiths/${hadithNumber}`
+      `/collections/${collectionName}/hadiths/${hadithNumber}`,
     ),
 
-  getRandomHadith: () =>
-    api.get<ApiResponse<{ hadith: RandomHadith }>>('/hadiths/random'),
+  getRandomHadith: () => api.get<ApiResponse<{ hadith: RandomHadith }>>('/hadiths/random'),
 };
 
 // Usage

@@ -1,4 +1,15 @@
 import {
+  GetVersesByChapterParamsDto,
+  GetChapterQueryDto,
+  GetChapterInfoQueryDto,
+} from './../dto/quran.dto';
+import {
+  GetChapterInfoParamsDto,
+  GetChapterParamsDto,
+  GetChaptersQueryDto,
+  GetVersesByChapterQueryDto,
+} from '@/features/quran/dto/quran.dto';
+import {
   Chapter,
   ChapterInfo,
   Translation,
@@ -18,14 +29,12 @@ const api = axios.create({
 });
 
 // Chapters
-export const getChapters = async (language?: string) => {
+export const getChapters = async ({ language }: GetChaptersQueryDto) => {
   try {
-    const cacheKey = makeKey('chapters', language || 'en');
+    const cacheKey = makeKey('chapters', language);
     const cached = (await cacheGet(cacheKey)) as Chapter[] | undefined;
     if (cached) return cached;
-
-    const params = language ? { language } : {};
-    const { data } = await api.get<{ chapters: Chapter[] }>('chapters', { params });
+    const { data } = await api.get<{ chapters: Chapter[] }>('chapters', { params: { language } });
     cacheSet(cacheKey, data.chapters, 30 * 24 * 60 * 60 * 1000);
     return data.chapters;
   } catch (error) {
@@ -34,13 +43,16 @@ export const getChapters = async (language?: string) => {
   }
 };
 
-export const getChapter = async (id: number, language?: string) => {
+export const getChapter = async (
+  id: GetChapterParamsDto['id'],
+  { language }: GetChapterQueryDto,
+) => {
   try {
-    const cacheKey = makeKey('chapter', id.toString(), language || 'en');
+    const cacheKey = makeKey('chapter', id.toString(), language);
     const cached = (await cacheGet(cacheKey)) as { chapter: Chapter } | undefined;
     if (cached) return cached.chapter;
 
-    const params = language ? { language } : {};
+    const params = { language };
     const { data } = await api.get<{ chapter: Chapter }>(`chapters/${id}`, { params });
     cacheSet(cacheKey, data, 30 * 24 * 60 * 60 * 1000);
     return data.chapter;
@@ -50,13 +62,16 @@ export const getChapter = async (id: number, language?: string) => {
   }
 };
 
-export const getChapterInfo = async (id: number, language?: string) => {
+export const getChapterInfo = async (
+  id: GetChapterInfoParamsDto['id'],
+  { language }: GetChapterInfoQueryDto,
+) => {
   try {
-    const cacheKey = makeKey('chapter-info', id.toString(), language || 'en');
+    const cacheKey = makeKey('chapter-info', id.toString(), language);
     const cached = (await cacheGet(cacheKey)) as { chapter_info: ChapterInfo } | undefined;
     if (cached) return cached.chapter_info;
 
-    const params = language ? { language } : {};
+    const params = { language };
     const { data } = await api.get<{ chapter_info: ChapterInfo }>(`chapters/${id}/info`, {
       params,
     });
@@ -70,69 +85,27 @@ export const getChapterInfo = async (id: number, language?: string) => {
 
 // Verses
 export const getVersesByChapter = async (
-  chapterNumber: number,
-  options?: {
-    language?: string;
-    words?: boolean;
-    translations?: number[];
-    tafsirs?: number[];
-    audio?: number;
-    page?: number;
-    per_page?: number;
-    offset?: number;
-    limit?: number;
-  },
+  chapterNumber: GetVersesByChapterParamsDto['chapterNumber'],
+  dto: GetVersesByChapterQueryDto,
 ) => {
   try {
-    const params: Record<string, any> = {};
-    if (options?.language) params.language = options.language;
-    if (options?.words !== undefined) params.words = options.words;
-    if (options?.translations && Array.isArray(options.translations)) {
-      params.translations = options.translations.join(',');
-    }
-    if (options?.tafsirs && Array.isArray(options.tafsirs)) {
-      params.tafsirs = options.tafsirs.join(',');
-    }
-    if (options?.audio) params.audio = options.audio;
-    if (options?.page) params.page = options.page;
-    if (options?.per_page) params.per_page = options.per_page;
-    if (options?.offset) params.offset = options.offset;
-    if (options?.limit) params.limit = options.limit;
+    logger.info(`Fetching verses for chapter ${chapterNumber} with params: ${JSON.stringify(dto)}`);
 
-    const cacheKey = makeKey('verses-chapter', chapterNumber.toString(), JSON.stringify(params));
+    const cacheKey = makeKey('verses-chapter', chapterNumber.toString(), JSON.stringify(dto));
     const cached = (await cacheGet(cacheKey)) as { verses: Verse[] } | undefined;
     if (cached) return cached.verses;
 
     const { data } = await api.get<{ verses: Verse[] }>(`verses/by_chapter/${chapterNumber}`, {
-      params,
+      params: {
+        fields: 'text_uthmani,text_indopak,verse_key,verse_number,sura_number,text_uthmani_tajweed',
+        ...dto,
+      },
     });
-
-    // Ensure verses array exists
-    if (!data || !data.verses || !Array.isArray(data.verses)) {
-      throw new Error(`Invalid response format for chapter ${chapterNumber}`);
-    }
-
     cacheSet(cacheKey, data, 7 * 24 * 60 * 60 * 1000);
     return data.verses;
   } catch (error: any) {
     logger.error(error, `Failed to fetch verses for chapter ${chapterNumber}`);
-    if (error.response) {
-      const status = error.response.status;
-      const errorData = error.response.data;
-      logger.error({ status, data: errorData }, `API error for chapter ${chapterNumber}`);
-
-      // If it's a 404 or 400, the endpoint might not support these parameters
-      if (status === 404 || status === 400) {
-        throw new Error(
-          `API endpoint not found or invalid parameters for chapter ${chapterNumber}. The requested translations/tafsirs may not be available.`,
-        );
-      }
-
-      throw new Error(
-        `Failed to fetch verses for chapter ${chapterNumber}: ${errorData?.message || error.response.statusText || `HTTP ${status}`}`,
-      );
-    }
-    throw new Error(`Failed to fetch verses for chapter ${chapterNumber}: ${error.message}`);
+    throw new Error(`Failed to fetch verses for chapter ${chapterNumber}`);
   }
 };
 

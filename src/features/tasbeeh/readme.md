@@ -45,26 +45,26 @@ interface User {
 
 // Create Tasbeeh DTO
 interface CreateTasbeehDto {
-  name: string;        // 1-100 characters
-  text: string;        // 1-500 characters
-  target: number;      // Integer, 1-1000000
+  name: string; // 1-100 characters
+  text: string; // 1-500 characters
+  target: number; // Integer, 1-1000000
 }
 
 // Update Tasbeeh DTO
 interface UpdateTasbeehDto {
-  name?: string;       // 1-100 characters
-  text?: string;       // 1-500 characters
-  target?: number;     // Integer, 1-1000000
+  name?: string; // 1-100 characters
+  text?: string; // 1-500 characters
+  target?: number; // Integer, 1-1000000
   isActive?: boolean;
 }
 
 // List Query Parameters
 interface ListTasbeehsQueryDto {
-  page?: number;       // Minimum: 1
-  limit?: number;      // Minimum: 1, Maximum: 100
-  sort?: string;       // Field to sort by (default: 'createdAt')
-  order?: 'asc' | 'desc';  // Sort order (default: 'desc')
-  active?: boolean;    // Filter by active status
+  page?: number; // Minimum: 1
+  limit?: number; // Minimum: 1, Maximum: 100
+  sort?: string; // Field to sort by (default: 'createdAt')
+  order?: 'asc' | 'desc'; // Sort order (default: 'desc')
+  active?: boolean; // Filter by active status
 }
 
 // Pagination Response
@@ -109,6 +109,7 @@ Get a paginated list of all tasbeehs for the authenticated user.
 **Authentication:** Required
 
 **Query Parameters:**
+
 - `page` (optional): Page number (default: 1, minimum: 1)
 - `limit` (optional): Items per page (default: all, minimum: 1, maximum: 100)
 - `sort` (optional): Field to sort by (default: 'createdAt')
@@ -116,20 +117,25 @@ Get a paginated list of all tasbeehs for the authenticated user.
 - `active` (optional): Filter by active status - 'true' or 'false' (default: true)
 
 **Response Type:**
+
 ```typescript
 // With pagination
-ApiResponse<{ tasbeehs: Tasbeeh[] }> // with meta.pagination
+ApiResponse<{ tasbeehs: Tasbeeh[] }>; // with meta.pagination
 
 // Without pagination
-ApiResponse<{ tasbeehs: Tasbeeh[] }> // with meta.total
+ApiResponse<{ tasbeehs: Tasbeeh[] }>; // with meta.total
 ```
 
 **Example Request:**
+
 ```typescript
 // With pagination
-const response = await fetch('/api/tasbeehs?page=1&limit=10&sort=createdAt&order=desc&active=true', {
-  credentials: 'include', // Include cookies for authentication
-});
+const response = await fetch(
+  '/api/tasbeehs?page=1&limit=10&sort=createdAt&order=desc&active=true',
+  {
+    credentials: 'include', // Include cookies for authentication
+  },
+);
 const data: ApiResponse<{ tasbeehs: Tasbeeh[] }> = await response.json();
 
 // Without pagination (get all)
@@ -140,6 +146,7 @@ const data: ApiResponse<{ tasbeehs: Tasbeeh[] }> = await response.json();
 ```
 
 **Example Response (with pagination):**
+
 ```json
 {
   "success": true,
@@ -191,6 +198,7 @@ const data: ApiResponse<{ tasbeehs: Tasbeeh[] }> = await response.json();
 ```
 
 **Example Response (without pagination):**
+
 ```json
 {
   "success": true,
@@ -226,14 +234,17 @@ Get a specific tasbeeh by its ID. Only returns tasbeehs owned by the authenticat
 **Authentication:** Required
 
 **Path Parameters:**
+
 - `id` (required): Tasbeeh ObjectId (24 character hex string)
 
 **Response Type:**
+
 ```typescript
-ApiResponse<{ tasbeeh: Tasbeeh }>
+ApiResponse<{ tasbeeh: Tasbeeh }>;
 ```
 
 **Example Request:**
+
 ```typescript
 const tasbeehId = '507f1f77bcf86cd799439011';
 const response = await fetch(`/api/tasbeehs/${tasbeehId}`, {
@@ -243,6 +254,7 @@ const data: ApiResponse<{ tasbeeh: Tasbeeh }> = await response.json();
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -280,20 +292,24 @@ Create a new tasbeeh for the authenticated user.
 **Authentication:** Required
 
 **Request Body:**
+
 ```typescript
-CreateTasbeehDto
+CreateTasbeehDto;
 ```
 
 **Headers:**
+
 - `Content-Type: application/json`
 - `X-Idempotency-Key` (optional): Unique key to prevent duplicate requests
 
 **Response Type:**
+
 ```typescript
-ApiResponse<{ tasbeeh: Tasbeeh }>
+ApiResponse<{ tasbeeh: Tasbeeh }>;
 ```
 
 **Example Request:**
+
 ```typescript
 const response = await fetch('/api/tasbeehs', {
   method: 'POST',
@@ -312,6 +328,7 @@ const data: ApiResponse<{ tasbeeh: Tasbeeh }> = await response.json();
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -333,6 +350,7 @@ const data: ApiResponse<{ tasbeeh: Tasbeeh }> = await response.json();
 ```
 
 **Validation Rules:**
+
 - `name`: Required, 1-100 characters
 - `text`: Required, 1-500 characters
 - `target`: Required, integer between 1 and 1,000,000
@@ -348,23 +366,28 @@ Update an existing tasbeeh. Only the owner can update their tasbeeh.
 **Authentication:** Required
 
 **Path Parameters:**
+
 - `id` (required): Tasbeeh ObjectId (24 character hex string)
 
 **Request Body:**
+
 ```typescript
-UpdateTasbeehDto // All fields are optional
+UpdateTasbeehDto; // All fields are optional
 ```
 
 **Headers:**
+
 - `Content-Type: application/json`
 - `X-Idempotency-Key` (optional): Unique key to prevent duplicate requests
 
 **Response Type:**
+
 ```typescript
-ApiResponse<{ tasbeeh: Tasbeeh }>
+ApiResponse<{ tasbeeh: Tasbeeh }>;
 ```
 
 **Example Request:**
+
 ```typescript
 const tasbeehId = '507f1f77bcf86cd799439011';
 const response = await fetch(`/api/tasbeehs/${tasbeehId}`, {
@@ -384,6 +407,7 @@ const data: ApiResponse<{ tasbeeh: Tasbeeh }> = await response.json();
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -405,6 +429,7 @@ const data: ApiResponse<{ tasbeeh: Tasbeeh }> = await response.json();
 ```
 
 **Validation Rules:**
+
 - `name`: Optional, 1-100 characters (if provided)
 - `text`: Optional, 1-500 characters (if provided)
 - `target`: Optional, integer between 1 and 1,000,000 (if provided)
@@ -421,14 +446,17 @@ Delete a tasbeeh by ID. Only the owner can delete their tasbeeh.
 **Authentication:** Required
 
 **Path Parameters:**
+
 - `id` (required): Tasbeeh ObjectId (24 character hex string)
 
 **Response Type:**
+
 ```typescript
 // 204 No Content (no response body)
 ```
 
 **Example Request:**
+
 ```typescript
 const tasbeehId = '507f1f77bcf86cd799439011';
 const response = await fetch(`/api/tasbeehs/${tasbeehId}`, {
@@ -442,6 +470,7 @@ if (response.status === 204) {
 ```
 
 **Example Response:**
+
 ```
 Status: 204 No Content
 (No response body)
@@ -454,6 +483,7 @@ Status: 204 No Content
 All endpoints follow a consistent error response format:
 
 **Error Response Type:**
+
 ```typescript
 interface ErrorResponse {
   success: false;
@@ -465,6 +495,7 @@ interface ErrorResponse {
 ```
 
 **Common HTTP Status Codes:**
+
 - `200` - Success
 - `201` - Created (for POST requests)
 - `204` - No Content (for DELETE requests)
@@ -478,6 +509,7 @@ interface ErrorResponse {
 **Example Error Responses:**
 
 **Validation Error (422):**
+
 ```json
 {
   "success": false,
@@ -500,6 +532,7 @@ interface ErrorResponse {
 ```
 
 **Not Found (404):**
+
 ```json
 {
   "success": false,
@@ -511,6 +544,7 @@ interface ErrorResponse {
 ```
 
 **Unauthorized (401):**
+
 ```json
 {
   "success": false,
@@ -542,23 +576,18 @@ export const tasbeehClient = {
     api.get<ApiResponse<{ tasbeehs: Tasbeeh[] }>>('/', { params }),
 
   // Get tasbeeh by ID
-  getById: (id: string) =>
-    api.get<ApiResponse<{ tasbeeh: Tasbeeh }>>(`/${id}`),
+  getById: (id: string) => api.get<ApiResponse<{ tasbeeh: Tasbeeh }>>(`/${id}`),
 
   // Create tasbeeh
   create: (data: CreateTasbeehDto, idempotencyKey?: string) =>
     api.post<ApiResponse<{ tasbeeh: Tasbeeh }>>('/', data, {
-      headers: idempotencyKey
-        ? { 'X-Idempotency-Key': idempotencyKey }
-        : {},
+      headers: idempotencyKey ? { 'X-Idempotency-Key': idempotencyKey } : {},
     }),
 
   // Update tasbeeh
   update: (id: string, data: UpdateTasbeehDto, idempotencyKey?: string) =>
     api.put<ApiResponse<{ tasbeeh: Tasbeeh }>>(`/${id}`, data, {
-      headers: idempotencyKey
-        ? { 'X-Idempotency-Key': idempotencyKey }
-        : {},
+      headers: idempotencyKey ? { 'X-Idempotency-Key': idempotencyKey } : {},
     }),
 
   // Delete tasbeeh
@@ -582,11 +611,14 @@ try {
   console.log(getResponse.data.tasbeeh);
 
   // Create tasbeeh
-  const { data: createResponse } = await tasbeehClient.create({
-    name: 'Subhan Allah',
-    text: 'سُبْحَانَ اللَّهِ',
-    target: 33,
-  }, 'unique-key-123');
+  const { data: createResponse } = await tasbeehClient.create(
+    {
+      name: 'Subhan Allah',
+      text: 'سُبْحَانَ اللَّهِ',
+      target: 33,
+    },
+    'unique-key-123',
+  );
   console.log(createResponse.data.tasbeeh);
 
   // Update tasbeeh
@@ -596,7 +628,7 @@ try {
       target: 100,
       isActive: false,
     },
-    'unique-key-456'
+    'unique-key-456',
   );
   console.log(updateResponse.data.tasbeeh);
 
@@ -653,9 +685,7 @@ export const useTasbeehs = (params?: ListTasbeehsQueryDto) => {
   const updateTasbeeh = async (id: string, data: UpdateTasbeehDto) => {
     try {
       const response = await tasbeehClient.update(id, data);
-      setTasbeehs((prev) =>
-        prev.map((t) => (t._id === id ? response.data.data.tasbeeh : t))
-      );
+      setTasbeehs((prev) => prev.map((t) => (t._id === id ? response.data.data.tasbeeh : t)));
       return response.data.data.tasbeeh;
     } catch (err: any) {
       throw new Error(err.response?.data?.message || 'Failed to update tasbeeh');
@@ -717,9 +747,9 @@ Here are some common tasbeeh texts you might want to use:
 - **Subhan Allahil Azeem** (سُبْحَانَ اللَّهِ الْعَظِيمِ) - "Glory be to Allah, the Great"
 
 Common target counts:
+
 - 33 (for morning/evening dhikr)
 - 100 (for extended dhikr)
 - 1000 (for special occasions)
 
 ---
-

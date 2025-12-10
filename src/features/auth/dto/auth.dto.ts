@@ -1,5 +1,14 @@
 import z from 'zod';
-import { loginSchema, signupSchema, refreshTokenSchema, updateUserSchema, verifyEmailSchema, resendVerificationEmailSchema, forgotPasswordSchema, resetPasswordSchema } from '@/features/auth';
+import {
+  loginSchema,
+  signupSchema,
+  refreshTokenSchema,
+  updateUserSchema,
+  verifyEmailSchema,
+  resendVerificationEmailSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from '@/features/auth';
 
 export type LoginDto = z.infer<typeof loginSchema>;
 

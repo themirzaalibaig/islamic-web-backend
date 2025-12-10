@@ -18,18 +18,10 @@ export const tasbeehsRouter = Router();
 tasbeehsRouter.use(authenticate);
 
 // List all tasbeehs for the authenticated user
-tasbeehsRouter.get(
-  '/',
-  validate({ query: listTasbeehsQuerySchema }),
-  listTasbeehsController,
-);
+tasbeehsRouter.get('/', validate({ query: listTasbeehsQuerySchema }), listTasbeehsController);
 
 // Get a specific tasbeeh by ID
-tasbeehsRouter.get(
-  '/:id',
-  validate({ params: tasbeehIdParamsSchema }),
-  getTasbeehController,
-);
+tasbeehsRouter.get('/:id', validate({ params: tasbeehIdParamsSchema }), getTasbeehController);
 
 // Create a new tasbeeh
 tasbeehsRouter.post(
@@ -48,8 +40,4 @@ tasbeehsRouter.put(
 );
 
 // Delete a tasbeeh by ID
-tasbeehsRouter.delete(
-  '/:id',
-  validate({ params: tasbeehIdParamsSchema }),
-  deleteTasbeehController,
-);
+tasbeehsRouter.delete('/:id', validate({ params: tasbeehIdParamsSchema }), deleteTasbeehController);

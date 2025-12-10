@@ -41,7 +41,7 @@ import {
 export const getChaptersController = catchAsync(
   async (req: TypedRequest<GetChaptersQueryDto>, res: Response) => {
     const { language } = req.query;
-    const chapters = await getChapters(language);
+    const chapters = await getChapters({ language });
     Res.success(res, { chapters });
   },
 );
@@ -50,7 +50,7 @@ export const getChapterController = catchAsync(
   async (req: TypedRequest<GetChapterQueryDto, unknown, GetChapterParamsDto>, res: Response) => {
     const { id } = req.params;
     const { language } = req.query;
-    const chapter = await getChapter(id, language);
+    const chapter = await getChapter(id, { language });
     Res.success(res, { chapter });
   },
 );
@@ -62,7 +62,7 @@ export const getChapterInfoController = catchAsync(
   ) => {
     const { id } = req.params;
     const { language } = req.query;
-    const chapterInfo = await getChapterInfo(id, language);
+    const chapterInfo = await getChapterInfo(id, { language });
     Res.success(res, { chapter_info: chapterInfo });
   },
 );
@@ -74,19 +74,8 @@ export const getVersesByChapterController = catchAsync(
     res: Response,
   ) => {
     const { chapterNumber } = req.params;
-    const { language, words, translations, tafsirs, audio, page, per_page, offset, limit } =
-      req.query;
-    const verses = await getVersesByChapter(chapterNumber, {
-      language,
-      words,
-      translations,
-      tafsirs,
-      audio,
-      page,
-      per_page,
-      offset,
-      limit,
-    });
+    const dto = req.query;
+    const verses = await getVersesByChapter(chapterNumber, dto);
     Res.success(res, { verses });
   },
 );

@@ -55,7 +55,7 @@ export const deleteTasbeehById = async (id: string, userId: string) => {
 
 export const listTasbeehs = async (dto: ListTasbeehsQueryDto, userId: string) => {
   const filter: FilterQuery<TasbeehDocument> = { user: userId };
-  
+
   if (dto.active !== undefined) {
     filter.isActive = dto.active;
   }

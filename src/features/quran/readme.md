@@ -21,18 +21,18 @@ Base URL: /api/quran
 ```typescript
 // Chapter Type
 interface Chapter {
-  id: number;                    // 1-114
+  id: number; // 1-114
   revelation_place: 'makkah' | 'madinah';
   revelation_order: number;
   bismillah_pre: boolean;
-  name_simple: string;           // e.g., "Al-Fatihah"
-  name_complex: string;          // e.g., "Al-Fātiĥah"
-  name_arabic: string;           // e.g., "الفاتحة"
+  name_simple: string; // e.g., "Al-Fatihah"
+  name_complex: string; // e.g., "Al-Fātiĥah"
+  name_arabic: string; // e.g., "الفاتحة"
   verses_count: number;
-  pages: [number, number];       // [start_page, end_page]
+  pages: [number, number]; // [start_page, end_page]
   translated_name: {
     language_name: string;
-    name: string;                // e.g., "The Opener"
+    name: string; // e.g., "The Opener"
   };
 }
 
@@ -55,7 +55,7 @@ interface Word {
   code_v2: string;
   page_number: number;
   line_number: number;
-  text: string;                  // Arabic text
+  text: string; // Arabic text
   translation: {
     text: string;
     language_name: string;
@@ -70,19 +70,19 @@ interface Word {
 interface Verse {
   id: number;
   verse_number: number;
-  verse_key: string;             // Format: "1:1" (chapter:verse)
-  juz_number: number;            // 1-30
+  verse_key: string; // Format: "1:1" (chapter:verse)
+  juz_number: number; // 1-30
   hizb_number: number;
   rub_el_hizb_number: number;
   ruku_number: number;
   manzil_number: number;
-  sajdah_type?: string | null;   // "recommended" | "obligatory" | null
+  sajdah_type?: string | null; // "recommended" | "obligatory" | null
   sajdah_number?: number | null;
   page_number: number;
-  text_uthmani?: string;         // Uthmani script
-  text_indopak?: string;         // Indo-Pak script
-  text_simple?: string;          // Simple Arabic text
-  words?: Word[];                // Word-by-word breakdown
+  text_uthmani?: string; // Uthmani script
+  text_indopak?: string; // Indo-Pak script
+  text_simple?: string; // Simple Arabic text
+  words?: Word[]; // Word-by-word breakdown
   translations?: TranslationText[];
   tafsirs?: TafsirText[];
   audio?: {
@@ -187,9 +187,11 @@ Get a list of all 114 chapters (Surahs) of the Quran.
 **Endpoint:** `GET /api/quran/chapters`
 
 **Query Parameters:**
+
 - `language` (optional, string, default: `"en"`): Language code for translated chapter names
 
 **Example Request:**
+
 ```typescript
 // Fetch chapters in English
 const response = await fetch('/api/quran/chapters?language=en', {
@@ -203,6 +205,7 @@ const response = await fetch('/api/quran/chapters?language=ar', {
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -232,6 +235,7 @@ const response = await fetch('/api/quran/chapters?language=ar', {
 ```
 
 **Usage Example:**
+
 ```typescript
 async function getChapters(language: string = 'en') {
   const response = await fetch(`/api/quran/chapters?language=${language}`, {
@@ -243,7 +247,7 @@ async function getChapters(language: string = 'en') {
 
 // Usage
 const chapters = await getChapters('en');
-chapters.forEach(chapter => {
+chapters.forEach((chapter) => {
   console.log(`${chapter.id}. ${chapter.name_simple} - ${chapter.translated_name.name}`);
 });
 ```
@@ -257,12 +261,15 @@ Get detailed information about a specific chapter.
 **Endpoint:** `GET /api/quran/chapters/:id`
 
 **Path Parameters:**
+
 - `id` (required, number): Chapter ID (1-114)
 
 **Query Parameters:**
+
 - `language` (optional, string, default: `"en"`): Language code
 
 **Example Request:**
+
 ```typescript
 const response = await fetch('/api/quran/chapters/1?language=en', {
   credentials: 'include',
@@ -270,6 +277,7 @@ const response = await fetch('/api/quran/chapters/1?language=en', {
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -304,12 +312,15 @@ Get additional information about a chapter (description, revelation period, etc.
 **Endpoint:** `GET /api/quran/chapters/:id/info`
 
 **Path Parameters:**
+
 - `id` (required, number): Chapter ID (1-114)
 
 **Query Parameters:**
+
 - `language` (optional, string, default: `"en"`): Language code
 
 **Example Request:**
+
 ```typescript
 const response = await fetch('/api/quran/chapters/1/info?language=en', {
   credentials: 'include',
@@ -317,6 +328,7 @@ const response = await fetch('/api/quran/chapters/1/info?language=en', {
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -343,9 +355,11 @@ Get all verses from a specific chapter with optional translations, tafsirs, audi
 **Endpoint:** `GET /api/quran/verses/chapter/:chapterNumber`
 
 **Path Parameters:**
+
 - `chapterNumber` (required, number): Chapter number (1-114)
 
 **Query Parameters:**
+
 - `language` (optional, string): Language code for word translations
 - `words` (optional, boolean): Include word-by-word breakdown
 - `translations` (optional, string): Comma-separated translation IDs (e.g., "131,85")
@@ -357,27 +371,27 @@ Get all verses from a specific chapter with optional translations, tafsirs, audi
 - `limit` (optional, number): Limit number of verses
 
 **Example Request:**
+
 ```typescript
 // Get verses with translations and word-by-word analysis
 const response = await fetch(
   '/api/quran/verses/chapter/1?words=true&translations=131,85&language=en',
-  { credentials: 'include' }
+  { credentials: 'include' },
 );
 
 // Get verses with tafsir and audio
-const response = await fetch(
-  '/api/quran/verses/chapter/1?tafsirs=169&audio=1',
-  { credentials: 'include' }
-);
+const response = await fetch('/api/quran/verses/chapter/1?tafsirs=169&audio=1', {
+  credentials: 'include',
+});
 
 // Get paginated verses
-const response = await fetch(
-  '/api/quran/verses/chapter/1?page=1&per_page=10',
-  { credentials: 'include' }
-);
+const response = await fetch('/api/quran/verses/chapter/1?page=1&per_page=10', {
+  credentials: 'include',
+});
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -440,6 +454,7 @@ const response = await fetch(
 ```
 
 **Usage Example:**
+
 ```typescript
 interface VerseOptions {
   language?: string;
@@ -451,10 +466,7 @@ interface VerseOptions {
   per_page?: number;
 }
 
-async function getVersesByChapter(
-  chapterNumber: number,
-  options: VerseOptions = {}
-) {
+async function getVersesByChapter(chapterNumber: number, options: VerseOptions = {}) {
   const params = new URLSearchParams();
   if (options.language) params.append('language', options.language);
   if (options.words) params.append('words', 'true');
@@ -464,10 +476,9 @@ async function getVersesByChapter(
   if (options.page) params.append('page', options.page.toString());
   if (options.per_page) params.append('per_page', options.per_page.toString());
 
-  const response = await fetch(
-    `/api/quran/verses/chapter/${chapterNumber}?${params.toString()}`,
-    { credentials: 'include' }
-  );
+  const response = await fetch(`/api/quran/verses/chapter/${chapterNumber}?${params.toString()}`, {
+    credentials: 'include',
+  });
   const result: ApiResponse<{ verses: Verse[] }> = await response.json();
   return result.data.verses;
 }
@@ -476,7 +487,7 @@ async function getVersesByChapter(
 const verses = await getVersesByChapter(1, {
   words: true,
   translations: [131, 85],
-  language: 'en'
+  language: 'en',
 });
 ```
 
@@ -489,9 +500,11 @@ Get all verses from a specific Juz (one of the 30 parts of the Quran).
 **Endpoint:** `GET /api/quran/verses/juz/:juzNumber`
 
 **Path Parameters:**
+
 - `juzNumber` (required, number): Juz number (1-30)
 
 **Query Parameters:**
+
 - `language` (optional, string): Language code
 - `words` (optional, boolean): Include word-by-word breakdown
 - `translations` (optional, string): Comma-separated translation IDs
@@ -501,14 +514,15 @@ Get all verses from a specific Juz (one of the 30 parts of the Quran).
 - `per_page` (optional, number): Items per page (max: 50)
 
 **Example Request:**
+
 ```typescript
-const response = await fetch(
-  '/api/quran/verses/juz/1?translations=131&words=true',
-  { credentials: 'include' }
-);
+const response = await fetch('/api/quran/verses/juz/1?translations=131&words=true', {
+  credentials: 'include',
+});
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -531,6 +545,7 @@ Get a list of all available translation resources.
 **Endpoint:** `GET /api/quran/translations`
 
 **Example Request:**
+
 ```typescript
 const response = await fetch('/api/quran/translations', {
   credentials: 'include',
@@ -538,6 +553,7 @@ const response = await fetch('/api/quran/translations', {
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -563,6 +579,7 @@ const response = await fetch('/api/quran/translations', {
 ```
 
 **Usage Example:**
+
 ```typescript
 async function getTranslations() {
   const response = await fetch('/api/quran/translations', {
@@ -573,8 +590,7 @@ async function getTranslations() {
 }
 
 // Filter by language
-const englishTranslations = (await getTranslations())
-  .filter(t => t.language_name === 'english');
+const englishTranslations = (await getTranslations()).filter((t) => t.language_name === 'english');
 ```
 
 ---
@@ -586,21 +602,24 @@ Get translations for all verses in a specific chapter.
 **Endpoint:** `GET /api/quran/chapters/:chapterNumber/translations`
 
 **Path Parameters:**
+
 - `chapterNumber` (required, number): Chapter number (1-114)
 
 **Query Parameters:**
+
 - `language` (optional, string): Language code
 - `translations` (optional, string): Comma-separated translation IDs
 
 **Example Request:**
+
 ```typescript
-const response = await fetch(
-  '/api/quran/chapters/1/translations?translations=131,85',
-  { credentials: 'include' }
-);
+const response = await fetch('/api/quran/chapters/1/translations?translations=131,85', {
+  credentials: 'include',
+});
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -630,9 +649,11 @@ Get a list of all available tafsir (exegesis) resources.
 **Endpoint:** `GET /api/quran/tafsirs`
 
 **Query Parameters:**
+
 - `language` (optional, string): Language code
 
 **Example Request:**
+
 ```typescript
 const response = await fetch('/api/quran/tafsirs?language=en', {
   credentials: 'include',
@@ -640,6 +661,7 @@ const response = await fetch('/api/quran/tafsirs?language=en', {
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -673,21 +695,24 @@ Get tafsir (exegesis) for all verses in a specific chapter.
 **Endpoint:** `GET /api/quran/chapters/:chapterNumber/tafsirs`
 
 **Path Parameters:**
+
 - `chapterNumber` (required, number): Chapter number (1-114)
 
 **Query Parameters:**
+
 - `language` (optional, string): Language code
 - `tafsirs` (optional, string): Comma-separated tafsir IDs
 
 **Example Request:**
+
 ```typescript
-const response = await fetch(
-  '/api/quran/chapters/1/tafsirs?tafsirs=169',
-  { credentials: 'include' }
-);
+const response = await fetch('/api/quran/chapters/1/tafsirs?tafsirs=169', {
+  credentials: 'include',
+});
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -717,9 +742,11 @@ Get a list of all available recitation resources (Qaris/Reciters).
 **Endpoint:** `GET /api/quran/recitations`
 
 **Query Parameters:**
+
 - `language` (optional, string): Language code
 
 **Example Request:**
+
 ```typescript
 const response = await fetch('/api/quran/recitations?language=en', {
   credentials: 'include',
@@ -727,6 +754,7 @@ const response = await fetch('/api/quran/recitations?language=en', {
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -758,18 +786,18 @@ Get audio recitation files for all verses in a specific chapter.
 **Endpoint:** `GET /api/quran/chapters/:chapterNumber/recitations/:recitationId`
 
 **Path Parameters:**
+
 - `chapterNumber` (required, number): Chapter number (1-114)
 - `recitationId` (required, number): Recitation ID
 
 **Example Request:**
+
 ```typescript
-const response = await fetch(
-  '/api/quran/chapters/1/recitations/1',
-  { credentials: 'include' }
-);
+const response = await fetch('/api/quran/chapters/1/recitations/1', { credentials: 'include' });
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -790,12 +818,12 @@ const response = await fetch(
 ```
 
 **Usage Example:**
+
 ```typescript
 async function getChapterRecitation(chapterNumber: number, recitationId: number) {
-  const response = await fetch(
-    `/api/quran/chapters/${chapterNumber}/recitations/${recitationId}`,
-    { credentials: 'include' }
-  );
+  const response = await fetch(`/api/quran/chapters/${chapterNumber}/recitations/${recitationId}`, {
+    credentials: 'include',
+  });
   const result: ApiResponse<{ audio_files: RecitationAudio[] }> = await response.json();
   return result.data.audio_files;
 }
@@ -816,18 +844,18 @@ Get audio recitation files for all verses in a specific Juz.
 **Endpoint:** `GET /api/quran/juzs/:juzNumber/recitations/:recitationId`
 
 **Path Parameters:**
+
 - `juzNumber` (required, number): Juz number (1-30)
 - `recitationId` (required, number): Recitation ID
 
 **Example Request:**
+
 ```typescript
-const response = await fetch(
-  '/api/quran/juzs/1/recitations/1',
-  { credentials: 'include' }
-);
+const response = await fetch('/api/quran/juzs/1/recitations/1', { credentials: 'include' });
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -856,18 +884,18 @@ Get audio recitation file for a specific verse.
 **Endpoint:** `GET /api/quran/verses/:ayahKey/recitations/:recitationId`
 
 **Path Parameters:**
+
 - `ayahKey` (required, string): Verse key in format "chapter:verse" (e.g., "1:1")
 - `recitationId` (required, number): Recitation ID
 
 **Example Request:**
+
 ```typescript
-const response = await fetch(
-  '/api/quran/verses/1:1/recitations/1',
-  { credentials: 'include' }
-);
+const response = await fetch('/api/quran/verses/1:1/recitations/1', { credentials: 'include' });
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -885,14 +913,14 @@ const response = await fetch(
 ```
 
 **Usage Example:**
+
 ```typescript
 async function playVerseAudio(verseKey: string, recitationId: number) {
-  const response = await fetch(
-    `/api/quran/verses/${verseKey}/recitations/${recitationId}`,
-    { credentials: 'include' }
-  );
+  const response = await fetch(`/api/quran/verses/${verseKey}/recitations/${recitationId}`, {
+    credentials: 'include',
+  });
   const result: ApiResponse<{ audio_file: RecitationAudio }> = await response.json();
-  
+
   const audio = new Audio(result.data.audio_file.audio_url);
   audio.play();
 }
@@ -919,7 +947,7 @@ async function displayChapter(chapterId: number) {
   // 2. Get verses with translations and word-by-word
   const versesRes = await fetch(
     `/api/quran/verses/chapter/${chapterId}?words=true&translations=131&language=en`,
-    { credentials: 'include' }
+    { credentials: 'include' },
   );
   const versesData: ApiResponse<{ verses: Verse[] }> = await versesRes.json();
   const verses = versesData.data.verses;
@@ -941,7 +969,7 @@ async function displayChapter(chapterId: number) {
 // Usage
 const { chapter, verses, recitations } = await displayChapter(1);
 console.log(`Chapter: ${chapter.name_simple}`);
-verses.forEach(verse => {
+verses.forEach((verse) => {
   console.log(`Verse ${verse.verse_number}: ${verse.text_simple}`);
   if (verse.translations) {
     console.log(`Translation: ${verse.translations[0].text}`);
@@ -978,10 +1006,9 @@ async function QuranReader({
     params.append('tafsirs', '169'); // Ibn Kathir
   }
 
-  const response = await fetch(
-    `/api/quran/verses/chapter/${chapterId}?${params.toString()}`,
-    { credentials: 'include' }
-  );
+  const response = await fetch(`/api/quran/verses/chapter/${chapterId}?${params.toString()}`, {
+    credentials: 'include',
+  });
   const result: ApiResponse<{ verses: Verse[] }> = await response.json();
   return result.data.verses;
 }
@@ -1001,7 +1028,7 @@ async function setupAudioPlayer(chapterId: number) {
   // Get audio for first reciter
   const audioRes = await fetch(
     `/api/quran/chapters/${chapterId}/recitations/${recitations[0].id}`,
-    { credentials: 'include' }
+    { credentials: 'include' },
   );
   const audioData: ApiResponse<{ audio_files: RecitationAudio[] }> = await audioRes.json();
   const audioFiles = audioData.data.audio_files;
@@ -1015,7 +1042,7 @@ async function setupAudioPlayer(chapterId: number) {
 // Usage
 const { recitations, audioFiles } = await setupAudioPlayer(1);
 // Create playlist from audioFiles
-const playlist = audioFiles.map(audio => audio.audio_url);
+const playlist = audioFiles.map((audio) => audio.audio_url);
 ```
 
 ---
@@ -1034,6 +1061,7 @@ interface ErrorResponse {
 ```
 
 **Common Error Codes:**
+
 - `400`: Bad Request - Invalid parameters
 - `401`: Unauthorized - Missing or invalid authentication
 - `404`: Not Found - Resource not found
@@ -1041,6 +1069,7 @@ interface ErrorResponse {
 - `500`: Internal Server Error
 
 **Example Error Handling:**
+
 ```typescript
 async function fetchWithErrorHandling(url: string) {
   try {
@@ -1100,14 +1129,10 @@ function useChapters(language: string = 'en') {
 For large chapters, use pagination:
 
 ```typescript
-async function getVersesPaginated(
-  chapterId: number,
-  page: number = 1,
-  perPage: number = 10
-) {
+async function getVersesPaginated(chapterId: number, page: number = 1, perPage: number = 10) {
   const response = await fetch(
     `/api/quran/verses/chapter/${chapterId}?page=${page}&per_page=${perPage}`,
-    { credentials: 'include' }
+    { credentials: 'include' },
   );
   const data: ApiResponse<{ verses: Verse[] }> = await response.json();
   return data.data.verses;
@@ -1123,10 +1148,9 @@ const [verses, setVerses] = useState<Verse[]>([]);
 async function loadVerses(chapterId: number) {
   setLoading(true);
   try {
-    const response = await fetch(
-      `/api/quran/verses/chapter/${chapterId}`,
-      { credentials: 'include' }
-    );
+    const response = await fetch(`/api/quran/verses/chapter/${chapterId}`, {
+      credentials: 'include',
+    });
     const data: ApiResponse<{ verses: Verse[] }> = await response.json();
     setVerses(data.data.verses);
   } catch (error) {

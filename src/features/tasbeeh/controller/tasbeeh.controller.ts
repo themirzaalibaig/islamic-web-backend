@@ -51,11 +51,11 @@ export const listTasbeehsController = catchAsync(
     const userId = getCurrentUserId(req);
     const dto = req.query;
     const result = await listTasbeehs(dto, userId);
-    
+
     if (dto.page && dto.limit) {
       return Res.paginated(res, { tasbeehs: result.data }, result.total, dto.page, dto.limit);
     }
-    
+
     return Res.success(
       res,
       { tasbeehs: result.data },
