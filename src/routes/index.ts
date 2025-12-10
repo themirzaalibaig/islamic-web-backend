@@ -6,6 +6,7 @@ import { uploadsRouter } from '@/features/upload';
 import { authRouter } from '@/features/auth';
 import { hadithsRouter } from '@/features/hadith';
 import { tasbeehsRouter } from '@/features/tasbeeh';
+import { quransRouter } from '@/features/quran';
 
 export const router = Router();
 
@@ -29,3 +30,4 @@ router.use('/uploads', uploadsRouter);
 router.use('/auth', authRouter);
 router.use('/hadith', hadithsRouter);
 router.use('/tasbeehs', tasbeehsRouter);
+router.use('/quran', quransRouter);
