@@ -7,6 +7,7 @@ import { authRouter } from '@/features/auth';
 import { hadithsRouter } from '@/features/hadith';
 import { tasbeehsRouter } from '@/features/tasbeeh';
 import { quransRouter } from '@/features/quran';
+import { chatsRouter } from '@/features/chat';
 
 export const router = Router();
 
@@ -31,3 +32,4 @@ router.use('/auth', authRouter);
 router.use('/hadith', hadithsRouter);
 router.use('/tasbeehs', tasbeehsRouter);
 router.use('/quran', quransRouter);
+router.use('/chat', chatsRouter);
