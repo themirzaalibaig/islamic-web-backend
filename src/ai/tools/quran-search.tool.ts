@@ -25,6 +25,11 @@ export const quranSearchTool = tool({
         .toLowerCase()
         .split(/\s+/)
         .filter((term: string) => term.length > 2);
+      
+      if (searchTerms.length === 0) {
+        return `Please provide more specific search terms (at least 3 characters each).`;
+      }
+
       const results: Array<{
         verse_key: string;
         text: string;
@@ -33,10 +38,15 @@ export const quranSearchTool = tool({
         chapter_id: number;
       }> = [];
 
-      // Search through chapters (limit to first 20 for performance)
-      const chaptersToSearch = chapters.slice(0, 20);
+      // Prioritize smaller, more commonly referenced chapters and limit to 10 for performance
+      // Focus on chapters 1-10, 2 (Al-Baqarah), 3 (Al-Imran), 4 (An-Nisa), 5 (Al-Maidah)
+      const priorityChapters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const chaptersToSearch = chapters
+        .filter((ch) => priorityChapters.includes(ch.id))
+        .slice(0, 10);
 
-      for (const chapter of chaptersToSearch) {
+      // Search chapters in parallel with a concurrency limit
+      const searchPromises = chaptersToSearch.map(async (chapter) => {
         try {
           const verses = await getVersesByChapter(chapter.id, {
             translations: [131], // Sahih International
@@ -49,6 +59,8 @@ export const quranSearchTool = tool({
             limit: undefined,
             per_page: undefined,
           });
+
+          const chapterResults: typeof results = [];
 
           for (const verse of verses) {
             if (!verse.translations || verse.translations.length === 0) continue;
@@ -66,7 +78,7 @@ export const quranSearchTool = tool({
             );
 
             if (matches) {
-              results.push({
+              chapterResults.push({
                 verse_key: verse.verse_key,
                 text: verse.text_simple || verse.text_uthmani || '',
                 translation: verse.translations[0].text,
@@ -74,14 +86,27 @@ export const quranSearchTool = tool({
                 chapter_id: chapter.id,
               });
 
-              if (results.length >= limit) break;
+              // Early stop if we have enough results from this chapter
+              if (chapterResults.length >= limit) break;
             }
           }
 
-          if (results.length >= limit) break;
+          return chapterResults;
         } catch (error) {
           logger.error(error, `Error searching chapter ${chapter.id}`);
-          continue;
+          return [];
+        }
+      });
+
+      // Wait for all searches to complete and collect results
+      const allResults = await Promise.all(searchPromises);
+      
+      // Flatten and limit results
+      for (const chapterResults of allResults) {
+        results.push(...chapterResults);
+        if (results.length >= limit) {
+          results.splice(limit);
+          break;
         }
       }
 

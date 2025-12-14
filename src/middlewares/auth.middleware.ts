@@ -21,7 +21,15 @@ export interface AuthenticatedRequest<Q = unknown, B = unknown, P = unknown>
 
 export const authenticate: RequestHandler = catchAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const accessToken = req.cookies?.accessToken;
+    // Try to get token from cookies first, then from Authorization header
+    let accessToken = req.cookies?.accessToken;
+    
+    if (!accessToken) {
+      const authHeader = req.headers.authorization || req.headers['authorization'];
+      if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+        accessToken = authHeader.substring(7);
+      }
+    }
 
     if (!accessToken) {
       throw AppError.unauthorized('Authentication required. Please login.');
@@ -66,7 +74,15 @@ export const authenticate: RequestHandler = catchAsync(
 
 export const optionalAuth: RequestHandler = catchAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const accessToken = req.cookies?.accessToken;
+    // Try to get token from cookies first, then from Authorization header
+    let accessToken = req.cookies?.accessToken;
+    
+    if (!accessToken) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        accessToken = authHeader.substring(7);
+      }
+    }
 
     if (!accessToken) {
       return next();

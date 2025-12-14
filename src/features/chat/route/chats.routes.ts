@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import z from 'zod';
 import {
   createConversationController,
   getConversationsController,
@@ -26,7 +25,11 @@ chatsRouter.use(authenticate);
 chatsRouter.post('/', validate({ body: createConversationSchema }), createConversationController);
 
 // List all conversations
-chatsRouter.get('/', validate({ query: listConversationsQuerySchema }), getConversationsController);
+chatsRouter.get(
+  '/',
+  validate({ query: listConversationsQuerySchema }) as any,
+  getConversationsController,
+);
 
 // Get single conversation
 chatsRouter.get(

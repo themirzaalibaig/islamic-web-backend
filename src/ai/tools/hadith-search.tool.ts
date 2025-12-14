@@ -33,29 +33,26 @@ export const hadithSearchTool = tool({
       // Get collections
       const collections = await getCollections();
 
-      // Search through popular collections
-      const popularCollections = [
-        'sahih-bukhari',
-        'sahih-muslim',
-        'sunan-abi-dawud',
-        'sunan-at-tirmidhi',
-      ];
+      // Search through most popular collections (limit to 2 for performance)
+      const popularCollections = ['sahih-bukhari', 'sahih-muslim'];
 
-      for (const collectionName of popularCollections) {
+      // Search collections in parallel
+      const searchPromises = popularCollections.map(async (collectionName) => {
         try {
           const collection = collections.find((c) => c.name === collectionName);
-          if (!collection) continue;
+          if (!collection) return [];
 
           const books = await getBooksByCollection(collectionName);
+          const collectionResults: typeof results = [];
 
-          // Search through first few books
-          for (const book of books.slice(0, 3)) {
+          // Search through first 2 books only
+          for (const book of books.slice(0, 2)) {
             try {
               const hadithsResponse = await getHadithsByBook(
                 collectionName,
                 book.bookNumber,
                 1,
-                50,
+                30, // Reduced from 50 to 30
               );
 
               for (const hadith of hadithsResponse.data) {
@@ -64,7 +61,7 @@ export const hadithSearchTool = tool({
                 const matches = searchTerms.some((term: string) => hadithText.includes(term));
 
                 if (matches) {
-                  results.push({
+                  collectionResults.push({
                     reference: `${collection.name} ${book.bookNumber}:${hadith.hadithNumber}`,
                     text: hadithBody,
                     collection: collection.name,
@@ -72,21 +69,33 @@ export const hadithSearchTool = tool({
                     hadithNumber: hadith.hadithNumber,
                   });
 
-                  if (results.length >= limit) break;
+                  if (collectionResults.length >= limit) break;
                 }
               }
 
-              if (results.length >= limit) break;
+              if (collectionResults.length >= limit) break;
             } catch (error) {
               logger.error(error, `Error searching book ${book.bookNumber} in ${collectionName}`);
               continue;
             }
           }
 
-          if (results.length >= limit) break;
+          return collectionResults;
         } catch (error) {
           logger.error(error, `Error searching collection ${collectionName}`);
-          continue;
+          return [];
+        }
+      });
+
+      // Wait for all searches to complete and collect results
+      const allResults = await Promise.all(searchPromises);
+      
+      // Flatten and limit results
+      for (const collectionResults of allResults) {
+        results.push(...collectionResults);
+        if (results.length >= limit) {
+          results.splice(limit);
+          break;
         }
       }
 

@@ -9,7 +9,7 @@ const MessageSourceSchema = new Schema<MessageSource>(
   {
     type: { type: String, enum: ['quran', 'hadith'], required: true },
     reference: { type: String, required: true },
-    text: { type: String, required: true },
+    text: { type: String, required: false, default: '' },
     metadata: { type: Schema.Types.Mixed },
   },
   { _id: false },
