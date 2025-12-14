@@ -47,7 +47,11 @@ export const verifyEmail = async (email: string, otp: string) => {
 
   user.isVerified = true;
   user.code = undefined;
+  const token = generateTokens({ id: user._id, role: user.role });
+  user.token = token.refreshToken;
   await user.save();
+  user.password = undefined;
+  user.token = undefined;
 
   await addEmailJob('welcome', {
     to: user.email,
@@ -55,7 +59,7 @@ export const verifyEmail = async (email: string, otp: string) => {
     html: getWelcomeEmailTemplate(user.username),
   });
 
-  return user;
+  return { user, token };
 };
 
 export const resendVerificationEmail = async (email: string) => {

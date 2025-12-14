@@ -38,8 +38,14 @@ export const signupController = catchAsync(
 export const verifyEmailController = catchAsync(
   async (req: TypedRequest<unknown, VerifyEmailDto>, res: Response) => {
     const { email, otp } = req.body;
-    const user = await verifyEmail(email, otp);
-    return Res.success(res, { user }, 'Email verified successfully');
+    const { user, token } = await verifyEmail(email, otp);
+    setCookie(res, 'accessToken', token.accessToken, {
+      maxAge: getTokenExpiration(token.accessToken)!,
+    });
+    setCookie(res, 'refreshToken', token.refreshToken, {
+      maxAge: getTokenExpiration(token.refreshToken)!,
+    });
+    return Res.success(res, { user, token: token }, 'Email verified successfully');
   },
 );
 
