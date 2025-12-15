@@ -4,9 +4,8 @@ import { run } from '@openai/agents';
 import { islamicAssistantAgent } from '@/ai/agents/islamic-assistant.agent';
 import { logger } from '@/utils/logger.util';
 import { AppError } from '@/utils/error.util';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, ObjectId } from 'mongoose';
 import { findOneOrThrow } from '@/utils/db.util';
-import { toToon } from '@/utils/toon.util';
 
 // Extract sources from AI response (parse citations)
 function extractSources(response: string): MessageSource[] {
@@ -68,7 +67,7 @@ export const createConversation = async (userId: string, title?: string): Promis
   return {
     ...chatObj,
     userId: chatObj.userId.toString(),
-    _id: chatObj._id.toString(),
+    _id: (chatObj._id as ObjectId).toString(),
   } as Chat;
 };
 
@@ -104,7 +103,7 @@ export const getConversation = async (conversationId: string, userId: string): P
     message: 'Conversation not found',
   });
 
-  const chatObj = chat.toObject();
+  const chatObj = chat?.toObject();
   return {
     ...chatObj,
     userId: chatObj.userId.toString(),
