@@ -18,7 +18,11 @@ export const tasbeehsRouter = Router();
 tasbeehsRouter.use(authenticate);
 
 // List all tasbeehs for the authenticated user
-tasbeehsRouter.get('/', validate({ query: listTasbeehsQuerySchema }), listTasbeehsController);
+tasbeehsRouter.get(
+  '/',
+  validate({ query: listTasbeehsQuerySchema }) as any,
+  listTasbeehsController,
+);
 
 // Get a specific tasbeeh by ID
 tasbeehsRouter.get('/:id', validate({ params: tasbeehIdParamsSchema }), getTasbeehController);
